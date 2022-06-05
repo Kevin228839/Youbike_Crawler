@@ -4,3 +4,4 @@
 
 ## For youbike 1.0: crawler1 & receiver1
 ## For youbike 2.0: crawler2 & receiver2
+## index.js: running server for api calling
