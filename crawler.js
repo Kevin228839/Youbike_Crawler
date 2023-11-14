@@ -1,13 +1,13 @@
 const axios = require('axios');
 const amqp = require('amqplib/callback_api');
 
-amqp.connect('amqp://localhost', function(error0, connection) {
-  if (error0) {
-    throw error0;
+module.exports = amqp.connect('amqp://my-rabbitmq', function(error, connection) {
+  if (error) {
+    console.log(error);
   }
-  connection.createChannel(function(error1, channel) {
-    if (error1) {
-      throw error1;
+  connection.createChannel(function(error, channel) {
+    if (error) {
+      console.log(error);
     }
     const queue = 'crawler2';
     channel.assertQueue(queue, {
@@ -19,12 +19,11 @@ amqp.connect('amqp://localhost', function(error0, connection) {
         for(let i=0; i<response.data.length; i++) {
           const msg = JSON.stringify(response.data[i]);
           channel.sendToQueue(queue, Buffer.from(msg));
-          console.log(JSON.parse(msg));
         }
       }).catch(error => {
         console.log(error);
       });
-    },60000);
+    }, 60000);
   });
 });
 

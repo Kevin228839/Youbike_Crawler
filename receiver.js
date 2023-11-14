@@ -1,29 +1,26 @@
 const amqp = require('amqplib/callback_api');
 const { MongoClient } = require("mongodb");
 
-amqp.connect('amqp://localhost', function(error0, connection) {
-    if (error0) {
-        throw error0;
+module.exports = amqp.connect('amqp://my-rabbitmq', function(error, connection) {
+    if (error) {
+        console.log(error);
     }
-    connection.createChannel(async function(error1, channel) {
-        if (error1) {
-            throw error1;
+    connection.createChannel(async function(error, channel) {
+        if (error) {
+            console.log(error);
         }
         // mongodb connection
-        const uri = "mongodb://localhost:2717,localhost:2727,localhost:2737/?replicaSet=myReplicaSet&readPreference=secondary";
+        const uri = "mongodb://my-mongodb:27017";
         const client = new MongoClient(uri);
         await client.connect();
         const database = client.db("demo");
         const youbike = database.collection("youbike");
-        console.log("Connected successfully to db server, start writing youbike2 data");
         // rabbitmq 
         const queue = 'crawler2';
         channel.assertQueue(queue, {
             durable: false
         });
-        console.log('Waiting for messages in %s. To exit press CTRL+C', queue);
-
-        channel.consume(queue, async function(msg) {
+        channel.consume(queue, function(msg) {
             channel.ack(msg);
             const receiveMsg = JSON.parse(msg.content.toString());
             const finalMsg = {
@@ -33,8 +30,7 @@ amqp.connect('amqp://localhost', function(error0, connection) {
                 'location': {'type': 'Point', 'coordinates': [parseFloat(receiveMsg.lng), parseFloat(receiveMsg.lat)]},
                 'datatime': receiveMsg.mday,
             };
-            await youbike.insertOne(finalMsg);
-            console.log(finalMsg);
+            youbike.insertOne(finalMsg);
         }, {
             noAck: false
         });

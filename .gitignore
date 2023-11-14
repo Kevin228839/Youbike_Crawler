@@ -1,5 +1,4 @@
 .pem
 .env
 node_modules
-**/.DS_Store
-erl_crash.dump
+.DS_Store
