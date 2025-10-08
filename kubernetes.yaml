@@ -55,7 +55,7 @@ spec:
   selector:
     matchLabels:
       app: rabbitmq
-  template: # configuration for a rabbitmq contaienr wrapped in a pod
+  template: # configuration for a rabbitmq container wrapped in a pod
     metadata: 
       labels: 
         app: rabbitmq
@@ -99,7 +99,7 @@ spec:
   selector:
     matchLabels:
       app: mongodb
-  template: # configuration for a mongodb contaienr wrapped in a pod
+  template: # configuration for a mongodb container wrapped in a pod
     metadata: 
       labels: 
         app: mongodb
@@ -142,7 +142,7 @@ spec:
   selector:
     matchLabels:
       app: server
-  template: # configuration for a mongodb contaienr wrapped in a pod
+  template: # configuration for the server container wrapped in a pod
     metadata: 
       labels: 
         app: server
