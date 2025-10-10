@@ -4,7 +4,7 @@ kind: Service
 metadata:
   name: my-rabbitmq
 spec:
-  selector: # the service is applied to pods whose label equals to "app: rabbitmq" 
+  selector: # the service is applied to pods whose label equals to "app: rabbitmq"
     app: rabbitmq
   type: NodePort
   ports:
@@ -22,7 +22,7 @@ kind: Service
 metadata:
   name: my-mongodb
 spec:
-  selector: # the service is applied to pods whose label equals to "app: mongodb" 
+  selector: # the service is applied to pods whose label equals to "app: mongodb"
     app: mongodb
   type: NodePort
   ports:
@@ -36,7 +36,7 @@ kind: Service
 metadata:
   name: my-server
 spec:
-  selector: # the service is applied to pods whose label equals to "app: server" 
+  selector: # the service is applied to pods whose label equals to "app: server"
     app: server
   type: NodePort
   ports:
@@ -56,21 +56,21 @@ spec:
     matchLabels:
       app: rabbitmq
   template: # configuration for a rabbitmq container wrapped in a pod
-    metadata: 
-      labels: 
+    metadata:
+      labels:
         app: rabbitmq
     spec:
       containers:
         - name: rabbitmq
           image: rabbitmq:3.9.18-management-alpine
-          ports: 
+          ports:
             - containerPort: 5672
             - containerPort: 15672
           resources:
             limits:
               cpu: 500m
               memory: 512Mi
-            requests: 
+            requests:
               cpu: 500m
               memory: 512Mi
           livenessProbe:
@@ -89,7 +89,7 @@ spec:
             failureThreshold: 1
             tcpSocket:
               port: 5672
---- 
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -100,20 +100,20 @@ spec:
     matchLabels:
       app: mongodb
   template: # configuration for a mongodb container wrapped in a pod
-    metadata: 
-      labels: 
+    metadata:
+      labels:
         app: mongodb
     spec:
       containers:
         - name: mongodb
           image: mongo
-          ports: 
+          ports:
             - containerPort: 27017
           resources:
             limits:
               cpu: 500m
               memory: 512Mi
-            requests: 
+            requests:
               cpu: 500m
               memory: 512Mi
           livenessProbe:
@@ -132,7 +132,7 @@ spec:
             failureThreshold: 1
             tcpSocket:
               port: 27017
---- 
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -143,27 +143,37 @@ spec:
     matchLabels:
       app: server
   template: # configuration for the server container wrapped in a pod
-    metadata: 
-      labels: 
+    metadata:
+      labels:
         app: server
     spec:
       initContainers:
         - name: wait-for-rabbitmq
           image: busybox:latest
-          command: ['sh', '-c', "until nc -z my-rabbitmq 5672; do echo `date`; sleep 1; done"]
+          command:
+            [
+              "sh",
+              "-c",
+              "until nc -z my-rabbitmq 5672; do echo `date`; sleep 1; done",
+            ]
         - name: wait-for-mongodb
           image: busybox:latest
-          command: ['sh', '-c', "until nc -z my-mongodb 27017; do echo `date`; sleep 1; done"]
+          command:
+            [
+              "sh",
+              "-c",
+              "until nc -z my-mongodb 27017; do echo `date`; sleep 1; done",
+            ]
       containers:
         - name: server
-          image: kevin228839/youbike-crawler:v2
-          ports: 
+          image: kevin228839/youbike-crawler:v3
+          ports:
             - containerPort: 30005
           resources:
             limits:
               cpu: 500m
               memory: 512Mi
-            requests: 
+            requests:
               cpu: 500m
               memory: 512Mi
           livenessProbe:
