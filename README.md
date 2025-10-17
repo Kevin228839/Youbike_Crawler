@@ -6,8 +6,8 @@
 2. Run the following command to start the app:
 
 ```sh=
-k3d cluster create mycluster -s 1 -a 2 -p "30000-30005:30000-30005@server:0"
-kubectl apply -f kubernetes.yaml
+k3d cluster create myCluster -s 1 -a 1 -p "80:80@loadbalancer"
+helm install demo helm
 ```
 
 3. Check whether the app is running successfully.
@@ -18,11 +18,11 @@ kubectl get pod
 
 4. Open your browser and test the following url. You can change the parameters to wherever you like in Taipei City. (lng = longitude && lat = latitude)
 
-- http://localhost:30005/?lng=121.54&lat=25.02605
+- http://localhost/?lng=121.54&lat=25.02605
 
-5. Delete the app
+5. Clean up
 
 ```sh=
-kubectl delete -f kubernetes.yaml
-k3d cluster delete mycluster
+helm uninstall demo
+k3d cluster delete myCluster
 ```

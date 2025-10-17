@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-mongodb
+spec:
+  selector: # the service is applied to pods whose label equals to "app: mongodb"
+    app: mongodb
+  type: ClusterIP
+  ports:
+    - name: mongodb
+      port: 27017
+      targetPort: 27017
