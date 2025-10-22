@@ -1,15 +1,15 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: my-rabbitmq
+  name: "{{ .Release.Name }}-rabbitmq"
 spec:
   selector: # the service is applied to pods whose label equals to "app: rabbitmq"
-    app: rabbitmq
+    app: "{{ .Release.Name }}-rabbitmq"
   type: ClusterIP
   ports:
-    - name: rabbitmq
+    - name: rabbitmq-port
       port: 5672
       targetPort: 5672
-    - name: rabbitmq-management
+    - name: rabbitmq-management-port
       port: 15672
       targetPort: 15672

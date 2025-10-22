@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: my-server
+  name: "{{ .Release.Name }}-server"
 spec:
   replicas: 1 # 1 pod (note: every pod is independent to each other)
   selector:
     matchLabels:
-      app: server
+      app: "{{ .Release.Name }}-server"
   template: # configuration for the server container wrapped in a pod
     metadata:
       labels:
-        app: server
+        app: "{{ .Release.Name }}-server"
     spec:
       initContainers:
         - name: wait-for-rabbitmq
@@ -19,7 +19,7 @@ spec:
             [
               "sh",
               "-c",
-              "until nc -z my-rabbitmq 5672; do echo `date`; sleep 1; done",
+              "until nc -z {{ .Release.Name }}-rabbitmq 5672; do echo `date`; sleep 1; done",
             ]
         - name: wait-for-mongodb
           image: busybox:latest
@@ -27,11 +27,22 @@ spec:
             [
               "sh",
               "-c",
-              "until nc -z my-mongodb 27017; do echo `date`; sleep 1; done",
+              "until nc -z {{ .Release.Name }}-mongodb 27017; do echo `date`; sleep 1; done",
             ]
       containers:
-        - name: server
-          image: kevin228839/youbike-crawler:v3
+        - name: "{{ .Release.Name }}-server"
+          image: kevin228839/youbike-crawler:v4
+          env:
+            - name: RABBITMQ_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ .Release.Name }}-configmap"
+                  key: RABBITMQ_HOST
+            - name: MONGODB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ .Release.Name }}-configmap"
+                  key: MONGODB_HOST
           ports:
             - containerPort: 30005
           resources:

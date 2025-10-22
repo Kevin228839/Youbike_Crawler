@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: my-ingress
+  name: "{{ .Release.Name }}-ingress"
 spec:
   rules:
     - http:
@@ -10,6 +10,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: my-server
+                name: "{{ .Release.Name }}-server"
                 port:
                   number: 30005 # must match the port defined in server-service.yaml
