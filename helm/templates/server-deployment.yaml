@@ -31,7 +31,8 @@ spec:
             ]
       containers:
         - name: "{{ .Release.Name }}-server"
-          image: kevin228839/youbike-crawler:v4
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: Always
           env:
             - name: RABBITMQ_HOST
               valueFrom:
