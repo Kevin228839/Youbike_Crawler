@@ -8,4 +8,4 @@ RUN npm install
 
 EXPOSE 30005
 
-CMD [ "node", "index.js" ]
+CMD [ "node", "src/index.js" ]
