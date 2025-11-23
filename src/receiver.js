@@ -5,27 +5,19 @@ const rabbitmqUrl = `amqp://${rabbitmqHost}:5672`;
 const mongodbHost = process.env.MONGODB_HOST || "localhost";
 const mongodbUrl = `mongodb://${mongodbHost}:27017`;
 
-module.exports = amqp.connect(rabbitmqUrl, function (error, connection) {
-  if (error) {
-    console.log(error);
-  }
-  connection.createChannel(async function (error, channel) {
-    if (error) {
-      console.log(error);
-    }
-    // mongodb connection
+async function start() {
+  try {
     const client = new MongoClient(mongodbUrl);
     await client.connect();
     const database = client.db("demo");
     const youbike = database.collection("youbike");
-    // rabbitmq
+    const connection = await amqp.connect(rabbitmqUrl);
+    const channel = await connection.createChannel();
     const queue = "crawler2";
-    channel.assertQueue(queue, {
-      durable: false,
-    });
+    await channel.assertQueue(queue, { durable: false });
     channel.consume(
       queue,
-      function (msg) {
+      async function (msg) {
         channel.ack(msg);
         const receiveMsg = JSON.parse(msg.content.toString());
         const finalMsg = {
@@ -41,11 +33,18 @@ module.exports = amqp.connect(rabbitmqUrl, function (error, connection) {
           },
           datatime: receiveMsg.mday,
         };
-        youbike.insertOne(finalMsg);
+        try {
+          await youbike.insertOne(finalMsg);
+        } catch (error) {
+          console.error("Error inserting document:", error);
+        }
       },
-      {
-        noAck: false,
-      }
+      { noAck: false }
     );
-  });
-});
+  } catch (error) {
+    console.error("Error in start function:", error);
+    throw error;
+  }
+}
+
+module.exports = { start };
