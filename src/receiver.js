@@ -1,4 +1,4 @@
-const amqp = require("amqplib/callback_api");
+const amqp = require("amqplib");
 const { MongoClient } = require("mongodb");
 const rabbitmqHost = process.env.RABBITMQ_HOST || "localhost";
 const rabbitmqUrl = `amqp://${rabbitmqHost}:5672`;

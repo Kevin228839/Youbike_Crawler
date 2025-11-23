@@ -26,17 +26,13 @@ async function main() {
       res.status(200).json({ response });
     });
 
-    app.get("/test", async (req, res) => {
-      res.status(200).json({ message: "test succeeded" });
-    });
-
     const server = app.listen(port, () => {
       console.log(`App listening at port ${port}`);
     });
 
     // Graceful shutdown
     const shutdown = () => {
-      console.log("Shutting down gracefully...");
+      console.log("Shutting down gracefully");
       server.close(() => {
         console.log("Server closed");
         process.exit(0);

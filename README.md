@@ -18,7 +18,7 @@ kubectl get pod
 
 4. Open your browser and test the following url. You can change the parameters to wherever you like in Taipei City. (lng = longitude && lat = latitude)
 
-- http://localhost/?lng=121.54&lat=25.02605
+- http://localhost/?lng=121.54282&lat=25.02351
 
 5. Clean up
 

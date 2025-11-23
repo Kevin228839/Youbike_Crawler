@@ -1,5 +1,5 @@
 const axios = require("axios");
-const amqp = require("amqplib/callback_api");
+const amqp = require("amqplib");
 const rabbitmqHost = process.env.RABBITMQ_HOST || "localhost";
 const rabbitmqUrl = `amqp://${rabbitmqHost}:5672`;
 
