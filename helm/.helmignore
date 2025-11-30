@@ -1,5 +1,11 @@
-# defualt helm ignore file
-.DS_Store
+# Patterns to ignore when building packages.
+
+# This supports shell glob patterns.
+
+#
+
+# Common VCS dirs
+
 .git/
 .gitignore
 .bzr/
@@ -7,11 +13,17 @@
 .hg/
 .hgignore
 .svn/
-*.swp
-*.bak
-*.tmp
-*.orig
+
+# Common backup files
+
+_.swp
+_.bak
+_.tmp
+_.orig
 *~
+
+# Various IDEs
+
 .project
 .idea/
 *.tmproj
