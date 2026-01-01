@@ -15,10 +15,14 @@ async function start() {
     const channel = await connection.createChannel();
     const queue = "crawler2";
     await channel.assertQueue(queue, { durable: false });
+    // limit RabbitMQ to deliver only one unacked message at a time
+    await channel.prefetch(1);
     channel.consume(
       queue,
       async function (msg) {
-        channel.ack(msg);
+        if (!msg) {
+          return;
+        }
         const receiveMsg = JSON.parse(msg.content.toString());
         const finalMsg = {
           station: receiveMsg.sna,
@@ -35,8 +39,11 @@ async function start() {
         };
         try {
           await youbike.insertOne(finalMsg);
+          channel.ack(msg);
         } catch (error) {
           console.error("Error inserting document:", error);
+          // requeue for retry; set third arg to false to drop instead
+          channel.nack(msg, false, true);
         }
       },
       { noAck: false }
